@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Api", "CatStealer.Api\CatStealer.Api.csproj", "{A978B7E1-B13A-4073-AD01-3F9D1616A467}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Application", "CatStealer.Application\CatStealer.Application.csproj", "{F35F427D-9738-45E5-9FDC-C6BAAB0C61C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Domain", "CatStealer.Domain\CatStealer.Domain.csproj", "{31CD7F6C-DEF0-4F81-858A-B87D18A90F85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Infrastructure", "CatStealer.Infrastructure\CatStealer.Infrastructure.csproj", "{B87D972C-2B15-4860-85E5-1433BA63E408}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A978B7E1-B13A-4073-AD01-3F9D1616A467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A978B7E1-B13A-4073-AD01-3F9D1616A467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A978B7E1-B13A-4073-AD01-3F9D1616A467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A978B7E1-B13A-4073-AD01-3F9D1616A467}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F35F427D-9738-45E5-9FDC-C6BAAB0C61C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F35F427D-9738-45E5-9FDC-C6BAAB0C61C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F35F427D-9738-45E5-9FDC-C6BAAB0C61C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F35F427D-9738-45E5-9FDC-C6BAAB0C61C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31CD7F6C-DEF0-4F81-858A-B87D18A90F85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31CD7F6C-DEF0-4F81-858A-B87D18A90F85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31CD7F6C-DEF0-4F81-858A-B87D18A90F85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31CD7F6C-DEF0-4F81-858A-B87D18A90F85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B87D972C-2B15-4860-85E5-1433BA63E408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87D972C-2B15-4860-85E5-1433BA63E408}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87D972C-2B15-4860-85E5-1433BA63E408}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87D972C-2B15-4860-85E5-1433BA63E408}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
