@@ -1,5 +1,4 @@
-﻿using CatStealer.Application.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace CatStealer.Application
 {
@@ -7,7 +6,12 @@ namespace CatStealer.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<ICatStealer, CatStealerService>();
+            services.AddMediatR(
+                options =>
+                {
+                    options.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection));
+                }
+                );
             return services;
         }
     }

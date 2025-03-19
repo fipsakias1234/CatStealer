@@ -1,6 +1,6 @@
-﻿using CatStealer.Application.Services;
+﻿using CatStealer.Application.Cats.Commands.AddCats;
 using CatStealer.Contracts.AddCats;
-using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatStealer.Api.Controllers
@@ -10,22 +10,19 @@ namespace CatStealer.Api.Controllers
     [Route("[controller]")]
     public class CatStealerController : ControllerBase
     {
-
-        private readonly ICatStealer _catStealer;
-
-        public CatStealerController(ICatStealer catStealer)
+        private readonly IMediator _mediator;
+        public CatStealerController(IMediator mediator)
         {
-            _catStealer = catStealer;
+            _mediator = mediator;
         }
 
         [HttpPost("AddCats")]
-        public IActionResult AddCats([FromBody] AddCatsRequest request)
+        public async Task<IActionResult> AddCats([FromBody] AddCatsRequest request)
         {
             //Logic which will call the API of the cats to steal
+            var command = new AddCatsCommand(request.NumberOfCatsToAdd);
 
-            var addedCatsInformation = _catStealer.addCatsDTO(request.NumberOfCatsToAdd);
-
-            var response = addedCatsInformation.Adapt<AddCatsResponse>();
+            var response = await _mediator.Send(command);
 
             return Ok(request);
         }
