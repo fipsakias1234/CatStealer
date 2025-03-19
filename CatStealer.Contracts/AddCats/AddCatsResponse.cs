@@ -2,7 +2,7 @@
 {
     public class AddCatsResponse
     {
-        List<AddCatDescriptionResponse> addedCats { get; set; }
+        public List<AddCatDescriptionResponse> addedCats { get; set; }
     }
 
     public class AddCatDescriptionResponse
