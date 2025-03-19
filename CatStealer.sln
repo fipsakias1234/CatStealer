@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Domain", "CatSte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Infrastructure", "CatStealer.Infrastructure\CatStealer.Infrastructure.csproj", "{B87D972C-2B15-4860-85E5-1433BA63E408}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatStealer.Contracts", "CatStealer.Contracts\CatStealer.Contracts.csproj", "{CA7908C0-0CD0-482F-9AFB-BDB5C2AA9312}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{B87D972C-2B15-4860-85E5-1433BA63E408}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B87D972C-2B15-4860-85E5-1433BA63E408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B87D972C-2B15-4860-85E5-1433BA63E408}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA7908C0-0CD0-482F-9AFB-BDB5C2AA9312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA7908C0-0CD0-482F-9AFB-BDB5C2AA9312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA7908C0-0CD0-482F-9AFB-BDB5C2AA9312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA7908C0-0CD0-482F-9AFB-BDB5C2AA9312}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
