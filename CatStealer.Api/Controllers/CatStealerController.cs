@@ -22,9 +22,14 @@ namespace CatStealer.Api.Controllers
             //Logic which will call the API of the cats to steal
             var command = new AddCatsCommand(request.NumberOfCatsToAdd);
 
-            var response = await _mediator.Send(command);
 
-            return Ok(request);
+            var addCatsResult = await _mediator.Send(command);
+
+            return addCatsResult.MatchFirst
+                 (
+                   addCatsDTO => Ok(addCatsDTO),
+                     error => Problem()
+                 );
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using CatStealer.Application.DTOs;
+using ErrorOr;
 using MediatR;
 
 namespace CatStealer.Application.Cats.Commands.AddCats
 {
-    public class AddCatsCommandHandler : IRequestHandler<AddCatsCommand, AddCatsDTO>
+    public class AddCatsCommandHandler : IRequestHandler<AddCatsCommand, ErrorOr<AddCatsDTO>>
     {
-        public Task<AddCatsDTO> Handle(AddCatsCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<AddCatsDTO>> Handle(AddCatsCommand request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new AddCatsDTO());
+            return new AddCatsDTO();
         }
     }
 }
