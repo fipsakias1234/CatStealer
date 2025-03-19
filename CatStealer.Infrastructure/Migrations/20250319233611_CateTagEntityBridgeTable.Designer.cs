@@ -4,6 +4,7 @@ using CatStealer.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatStealer.Infrastructure.Migrations
 {
     [DbContext(typeof(CatStealDbContext))]
-    partial class CatStealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250319233611_CateTagEntityBridgeTable")]
+    partial class CateTagEntityBridgeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

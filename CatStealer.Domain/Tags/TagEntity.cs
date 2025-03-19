@@ -1,5 +1,5 @@
 ﻿using CatStealer.Domain.Audit;
-using CatStealer.Domain.Cats;
+using CatStealer.Domain.CatsTagsBridge;
 
 namespace CatStealer.Domain.Tags
 {
@@ -7,7 +7,7 @@ namespace CatStealer.Domain.Tags
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<CatEntity> Cats { get; set; } = new List<CatEntity>();
+        public ICollection<CatTags> CatTags { get; set; } = new List<CatTags>();
 
     }
 }
