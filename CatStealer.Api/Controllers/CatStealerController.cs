@@ -1,4 +1,5 @@
 ﻿using CatStealer.Application.Cats.Commands.AddCats;
+using CatStealer.Application.Cats.Queries;
 using CatStealer.Contracts.AddCats;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,20 @@ namespace CatStealer.Api.Controllers
                    addCatsDTO => Ok(addCatsDTO),
                      error => Problem()
                  );
+        }
+
+        [HttpGet("GetCatById")]
+        public async Task<IActionResult> GetCatById([FromRoute] int catId)
+        {
+            //Logic which will call the API of the cats to steal
+            var getCatQueryResult = await _mediator.Send(new GetCatByIdQuery(catId));
+
+
+            return getCatQueryResult.MatchFirst
+                (
+                  getCatQueryResult => Ok(getCatQueryResult),
+                    error => Problem()
+                );
         }
     }
 }

@@ -1,11 +1,24 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CatStealer.Application.Common.Interfaces;
+using CatStealer.Infrastructure.Cats.Persistence;
+using CatStealer.Infrastructure.Common.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CatStealer.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContext<CatStealDbContext>(options =>
+               options.UseSqlServer(
+                   configuration.GetConnectionString("SqlDbConnection"),
+                   b => b.MigrationsAssembly(typeof(CatStealDbContext).Assembly.FullName)));
+            services.AddScoped<ICatStealerRepository, CatsRepository>();
+
+            services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<CatStealDbContext>());
+
             return services;
         }
     }
