@@ -1,8 +1,9 @@
-﻿using CatStealer.Domain.Cats;
+﻿using CatStealer.Application.Common.Pagination;
+using CatStealer.Domain.Cats;
 
 namespace CatStealer.Application.Common.Interfaces
 {
-    public interface ICatStealerRepository
+    public interface ICatStealerRepository : IPagedRepository<CatEntity>
     {
         Task AddCatAsync(CatEntity cat);
 
@@ -11,5 +12,9 @@ namespace CatStealer.Application.Common.Interfaces
         Task<CatEntity?> GetCatById(int id);
 
         Task<CatEntity?> GetCatWithTagsById(int id);
+
+        Task<PagedResult<CatEntity>> GetPagedCatsAsync(
+                                        PaginationParams paginationParams,
+                                        FilterParams filterParams);
     }
 }
