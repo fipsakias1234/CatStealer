@@ -20,9 +20,18 @@ namespace CatStealer.Api.Controllers
         [HttpPost("AddCats")]
         public async Task<IActionResult> AddCats([FromBody] AddCatsRequest request)
         {
+
+            if (request.NumberOfCatsToAdd < 0)
+            {
+                return Problem("Please enter a positive number of Number of Cats you want to steal");
+            }
+
+            if (request.NumberOfCatsToAdd > 100)
+            {
+                return Problem("Please don't be greedy you can steal maximum 100 cats each time");
+            }
             //Logic which will call the API of the cats to steal
             var command = new AddCatsCommand(request.NumberOfCatsToAdd);
-
 
             var addCatsResult = await _mediator.Send(command);
 
@@ -33,18 +42,16 @@ namespace CatStealer.Api.Controllers
                  );
         }
 
-        [HttpGet("GetCatById")]
-        public async Task<IActionResult> GetCatById([FromRoute] int catId)
+        [HttpGet("GetCatById/{id}")]
+        public async Task<IActionResult> GetCatById([FromRoute] int id)
         {
-            //Logic which will call the API of the cats to steal
-            var getCatQueryResult = await _mediator.Send(new GetCatByIdQuery(catId));
 
+            var getCatQueryResult = await _mediator.Send(new GetCatByIdQuery(id));
 
-            return getCatQueryResult.MatchFirst
-                (
-                  getCatQueryResult => Ok(getCatQueryResult),
-                    error => Problem()
-                );
+            return getCatQueryResult.MatchFirst(
+                catDto => Ok(catDto),
+                error => Problem()
+            );
         }
     }
 }

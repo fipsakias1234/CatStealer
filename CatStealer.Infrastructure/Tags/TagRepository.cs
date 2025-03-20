@@ -1,6 +1,7 @@
 ﻿using CatStealer.Application.Common.Interfaces;
 using CatStealer.Domain.Tags;
 using CatStealer.Infrastructure.Common.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace CatStealer.Infrastructure.Tags
 {
@@ -14,10 +15,15 @@ namespace CatStealer.Infrastructure.Tags
 
         }
 
-        public async Task AddTagsAsync(List<TagEntity> tag)
+        public async Task AddTagAsync(TagEntity tag)
         {
-            await _catStealDbContext.AddRangeAsync(tag);
-            await _catStealDbContext.SaveChangesAsync();
+            tag.CreatedOn = DateTime.UtcNow;
+            await _catStealDbContext.Tags.AddAsync(tag);
+        }
+
+        public async Task AddTagsAsync(List<TagEntity> tags)
+        {
+            await _catStealDbContext.Tags.AddRangeAsync(tags);
         }
 
         public async Task<TagEntity?> GetTagByIdAsync(int tagId)
@@ -25,10 +31,20 @@ namespace CatStealer.Infrastructure.Tags
             return await _catStealDbContext.Tags.FindAsync(tagId);
         }
 
-        public async Task<List<TagEntity>?> GetTagsByCatId(int catId)
+        public async Task<TagEntity?> GetTagByNameAsync(string tagName)
         {
-            throw new NotImplementedException();
+            return await _catStealDbContext.Tags
+                .FirstOrDefaultAsync(t => t.Name == tagName);
         }
 
+        public async Task<List<TagEntity>?> GetTagsByCatId(int catId)
+        {
+            var tags = await _catStealDbContext.CatTags
+                .Where(ct => ct.CatsId == catId)
+                .Select(ct => ct.Tag)
+                .ToListAsync();
+
+            return tags.Any() ? tags : null;
+        }
     }
 }

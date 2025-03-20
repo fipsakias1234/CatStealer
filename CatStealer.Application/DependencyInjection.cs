@@ -12,6 +12,7 @@ namespace CatStealer.Application
                     options.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection));
                 }
                 );
+            services.AddHttpClient();
             return services;
         }
     }

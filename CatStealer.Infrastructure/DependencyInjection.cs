@@ -1,6 +1,7 @@
 ﻿using CatStealer.Application.Common.Interfaces;
 using CatStealer.Infrastructure.Cats.Persistence;
 using CatStealer.Infrastructure.Common.Persistence;
+using CatStealer.Infrastructure.Tags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ namespace CatStealer.Infrastructure
                    configuration.GetConnectionString("SqlDbConnection"),
                    b => b.MigrationsAssembly(typeof(CatStealDbContext).Assembly.FullName)));
             services.AddScoped<ICatStealerRepository, CatsRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
 
             services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<CatStealDbContext>());
 

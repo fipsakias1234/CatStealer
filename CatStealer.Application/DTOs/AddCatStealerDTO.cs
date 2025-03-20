@@ -2,13 +2,12 @@
 {
     public class AddCatsDTO
     {
-        public List<AddCatDescriptionDTO> addedCats { get; set; }
+        public List<AddCatDescriptionDTO> AddedCats { get; set; } = new();
     }
 
     public class AddCatDescriptionDTO
     {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
+        public string CatId { get; set; }
+        public List<string> Tags { get; set; } = new();
     }
 }
