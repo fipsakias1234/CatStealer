@@ -1,8 +1,10 @@
-﻿using CatStealer.Application.Cats.Commands.AddCats;
+﻿using CatStealer.Api.Controllers.CustomController;
+using CatStealer.Application.Cats.Commands.AddCats;
 using CatStealer.Application.Cats.Queries;
 using CatStealer.Application.Cats.Queries.GetPagedCats;
 using CatStealer.Application.Common.Pagination;
 using CatStealer.Contracts.AddCats;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +13,7 @@ namespace CatStealer.Api.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    public class CatStealerController : ControllerBase
+    public class CatStealerController : ApiController
     {
         private readonly IMediator _mediator;
         public CatStealerController(IMediator mediator)
@@ -25,22 +27,23 @@ namespace CatStealer.Api.Controllers
 
             if (request.NumberOfCatsToAdd < 0)
             {
-                return Problem("Please enter a positive number of Number of Cats you want to steal");
+                return Problem(Error.Validation(description: "Number of cat to Add cannot be less than zero", code: "AddCats.ValidationError"));
             }
 
             if (request.NumberOfCatsToAdd > 100)
             {
-                return Problem("Please don't be greedy you can steal maximum 100 cats each time");
+                return Problem(Error.Validation(description: "Please don't be greedy you can steal maximum 100 cats each time", code: "AddCats.ValidationError"));
+
             }
             //Logic which will call the API of the cats to steal
             var command = new AddCatsCommand(request.NumberOfCatsToAdd);
 
             var addCatsResult = await _mediator.Send(command);
 
-            return addCatsResult.MatchFirst
+            return addCatsResult.Match
                  (
                    addCatsDTO => Ok(addCatsDTO),
-                     error => Problem()
+                     error => Problem(error)
                  );
         }
 
@@ -50,9 +53,9 @@ namespace CatStealer.Api.Controllers
 
             var getCatQueryResult = await _mediator.Send(new GetCatByIdQuery(id));
 
-            return getCatQueryResult.MatchFirst(
+            return getCatQueryResult.Match(
                 catDto => Ok(catDto),
-                error => Problem()
+                error => Problem(error)
             );
         }
 
@@ -72,7 +75,7 @@ namespace CatStealer.Api.Controllers
 
             return result.Match(
                 pagedCats => Ok(pagedCats),
-                error => Problem()
+                error => Problem(error)
             );
         }
     }
