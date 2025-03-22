@@ -104,7 +104,7 @@ namespace CatStealer.Application.Cats.Commands.AddCats
 
             await _unitOfWork.CommitChangesAsync();
 
-            return new AddCatsDTO();
+            return new AddCatsDTO { AddedCats = addedCats };
         }
 
         public class CatApiResponse
