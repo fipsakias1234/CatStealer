@@ -2,9 +2,13 @@
 using CatStealer.Application.Cats.Commands.AddCats;
 using CatStealer.Application.Cats.Queries;
 using CatStealer.Application.Cats.Queries.GetPagedCats;
+using CatStealer.Application.Cats.Validators;
 using CatStealer.Application.Common.Pagination;
+using CatStealer.Application.DTOs;
+using CatStealer.Application.Validation;
 using CatStealer.Contracts.AddCats;
 using ErrorOr;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +23,12 @@ namespace CatStealer.Api.Controllers
     public class CatStealerController : ApiController
     {
         private readonly IMediator _mediator;
-        public CatStealerController(IMediator mediator)
+
+        private readonly IValidatorService _validateService;
+        public CatStealerController(IMediator mediator, IValidatorService validateService)
         {
             _mediator = mediator;
+            _validateService = validateService;
         }
 
         /// <summary>
@@ -42,18 +49,15 @@ namespace CatStealer.Api.Controllers
         public async Task<IActionResult> AddCats([FromBody] AddCatsRequest request)
         {
 
-            if (request.NumberOfCatsToAdd < 0)
-            {
-                return Problem(Error.Validation(description: "Number of cat to Add cannot be less than zero", code: "AddCats.ValidationError"));
-            }
 
-            if (request.NumberOfCatsToAdd > 100)
-            {
-                return Problem(Error.Validation(description: "Please don't be greedy you can steal maximum 100 cats each time", code: "AddCats.ValidationError"));
+            var dto = request.Adapt<AddCatRequestDTO>();
 
-            }
+            var validationResult = await _validateService.ValidateAsync(dto, typeof(ICatStealerValidator));
+            if (validationResult.IsError)
+                return Problem(Error.Validation(validationResult.Errors.First().Code, validationResult.Errors.First().Description));
+
             //Logic which will call the API of the cats to steal
-            var command = new AddCatsCommand(request.NumberOfCatsToAdd);
+            var command = new AddCatsCommand(dto.NumberOfCatsToAdd);
 
             var addCatsResult = await _mediator.Send(command);
 

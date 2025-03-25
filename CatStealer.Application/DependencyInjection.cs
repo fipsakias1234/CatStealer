@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CatStealer.Application.Cats.Validators;
+using CatStealer.Application.Validation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CatStealer.Application
 {
@@ -13,6 +15,11 @@ namespace CatStealer.Application
                 }
                 );
             services.AddHttpClient();
+
+
+            services.AddScoped<IValidatorService, ValidatorService>();
+            services.AddScoped<ICatStealerValidator, CatStealerValidator>();
+
             return services;
         }
     }
