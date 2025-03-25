@@ -28,6 +28,7 @@ namespace CatStealer.Application.Cats.Commands.AddCats
         public async Task<ErrorOr<AddCatsDTO>> Handle(AddCatsCommand request, CancellationToken cancellationToken)
         {
 
+            // API request setup remains the same
             var apiUrl = $"https://api.thecatapi.com/v1/images/search?limit={request.numberOfCatsToAdd}&api_key={ApiKey}&has_breeds=1";
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, apiUrl);
             httpRequest.Headers.Add("x-api-key", ApiKey);
@@ -38,9 +39,7 @@ namespace CatStealer.Application.Cats.Commands.AddCats
                 return Error.Failure("Failed to retrieve cats from the API.");
             }
 
-
             var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken);
-
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -52,21 +51,28 @@ namespace CatStealer.Application.Cats.Commands.AddCats
                 return Error.Failure("No cats were retrieved from the API.");
             }
 
+            var existingTagsByName = new Dictionary<string, TagEntity>(StringComparer.OrdinalIgnoreCase);
+            var newTags = new List<TagEntity>();
+            var catsToAdd = new List<CatEntity>();
             var addedCats = new List<AddCatDescriptionDTO>();
 
             foreach (var catApiResponse in catApiResponses)
             {
-
                 var catEntity = new CatEntity
                 {
                     CatId = catApiResponse.Id,
                     Weight = catApiResponse.Width,
                     Height = catApiResponse.Height,
-                    Image = catApiResponse.Url
+                    Image = catApiResponse.Url,
+                    CreatedOn = DateTime.UtcNow,
+                    CatTags = new List<CatTags>()
                 };
 
+                catsToAdd.Add(catEntity);
 
-                var tags = new List<TagEntity>();
+                var catTagNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                // Extract all temperament tags
                 foreach (var breed in catApiResponse.Breeds)
                 {
                     if (!string.IsNullOrEmpty(breed.Temperament))
@@ -74,34 +80,69 @@ namespace CatStealer.Application.Cats.Commands.AddCats
                         var temperaments = breed.Temperament.Split(',', StringSplitOptions.TrimEntries);
                         foreach (var temperament in temperaments)
                         {
-                            var tag = await _tagRepository.GetTagByNameAsync(temperament);
-                            if (tag == null)
-                            {
-                                tag = new TagEntity { Name = temperament };
-                                await _tagRepository.AddTagAsync(tag);
-                            }
-                            tags.Add(tag);
+                            catTagNames.Add(temperament);
                         }
                     }
                 }
 
-
-                catEntity.CatTags = tags.Select(tag => new CatTags
-                {
-                    Cat = catEntity,
-                    Tag = tag
-                }).ToList();
-
-
-                await _catStealRepository.AddCatAsync(catEntity);
-
+                // Store the cat for Response
                 addedCats.Add(new AddCatDescriptionDTO
                 {
                     CatId = catEntity.CatId,
-                    Tags = tags.Select(t => t.Name).ToList()
+                    Tags = catTagNames.ToList()
                 });
             }
 
+            // Batch query for all existing tags we need
+            var allTagNames = addedCats.SelectMany(cat => cat.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            foreach (var tagName in allTagNames)
+            {
+                var existingTag = await _tagRepository.GetTagByNameAsync(tagName);
+                if (existingTag != null)
+                {
+                    existingTagsByName[tagName] = existingTag;
+                }
+                else
+                {
+                    var newTag = new TagEntity
+                    {
+                        Name = tagName,
+                        CreatedOn = DateTime.UtcNow
+                    };
+                    newTags.Add(newTag);
+                    existingTagsByName[tagName] = newTag;
+                }
+            }
+
+            // Batch insert all new tags
+            if (newTags.Any())
+            {
+                await _tagRepository.AddTagsAsync(newTags);
+            }
+
+            // Create relationships between cats and tags
+            for (int i = 0; i < catsToAdd.Count; i++)
+            {
+                var cat = catsToAdd[i];
+                var tagNames = addedCats[i].Tags;
+
+                foreach (var tagName in tagNames)
+                {
+                    if (existingTagsByName.TryGetValue(tagName, out var tag))
+                    {
+                        cat.CatTags.Add(new CatTags
+                        {
+                            Cat = cat,
+                            Tag = tag
+                        });
+                    }
+                }
+            }
+
+            // Batch insert all cats with their tag relationships
+            await _catStealRepository.AddCats(catsToAdd);
+
+            // Commit all changes in a single transaction
             await _unitOfWork.CommitChangesAsync();
 
             return new AddCatsDTO { AddedCats = addedCats };
