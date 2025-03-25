@@ -5,7 +5,6 @@ using CatStealer.Domain.CatsTagsBridge;
 using CatStealer.Domain.Tags;
 using ErrorOr;
 using MediatR;
-using System.Text.Json;
 
 namespace CatStealer.Application.Cats.Commands.AddCats
 {
@@ -15,41 +14,27 @@ namespace CatStealer.Application.Cats.Commands.AddCats
         private readonly ICatStealerRepository _catStealRepository;
         private readonly ITagRepository _tagRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly HttpClient _httpClient;
-        private const string ApiKey = "live_2l9wxyFcIbu2xTuzZP0udijzFNlt5MhpSGVMP4c3ByBAs4OPDKqxSbnq4usUGLNk";
+        private readonly ICatApiClient _catApiClient;
 
-        public AddCatsCommandHandler(ICatStealerRepository catStealRepository, IUnitOfWork unitOfWork, ITagRepository tagRepository, HttpClient httpClient)
+        public AddCatsCommandHandler(ICatStealerRepository catStealRepository, IUnitOfWork unitOfWork, ITagRepository tagRepository, ICatApiClient catApiClient)
         {
             _catStealRepository = catStealRepository;
             _tagRepository = tagRepository;
             _unitOfWork = unitOfWork;
-            _httpClient = httpClient;
+            _catApiClient = catApiClient;
         }
         public async Task<ErrorOr<AddCatsDTO>> Handle(AddCatsCommand request, CancellationToken cancellationToken)
         {
 
-            // API request setup remains the same
-            var apiUrl = $"https://api.thecatapi.com/v1/images/search?limit={request.numberOfCatsToAdd}&api_key={ApiKey}&has_breeds=1";
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, apiUrl);
-            httpRequest.Headers.Add("x-api-key", ApiKey);
+            // Get cats from the API using the client
+            var catApiResponsesResult = await _catApiClient.GetCatsAsync(request.numberOfCatsToAdd, cancellationToken);
 
-            var response = await _httpClient.SendAsync(httpRequest, cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            if (catApiResponsesResult.IsError)
             {
-                return Error.Failure("Failed to retrieve cats from the API.");
+                return catApiResponsesResult.Errors;
             }
 
-            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken);
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var catApiResponses = JsonSerializer.Deserialize<List<CatApiResponse>>(jsonResponse, options);
-            if (catApiResponses == null || !catApiResponses.Any())
-            {
-                return Error.Failure("No cats were retrieved from the API.");
-            }
+            var catApiResponses = catApiResponsesResult.Value;
 
             var existingTagsByName = new Dictionary<string, TagEntity>(StringComparer.OrdinalIgnoreCase);
             var newTags = new List<TagEntity>();

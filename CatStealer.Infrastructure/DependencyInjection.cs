@@ -1,4 +1,6 @@
 ﻿using CatStealer.Application.Common.Interfaces;
+using CatStealer.Application.Common.Models;
+using CatStealer.Infrastructure.CatApi;
 using CatStealer.Infrastructure.Cats.Persistence;
 using CatStealer.Infrastructure.Common.Persistence;
 using CatStealer.Infrastructure.Tags;
@@ -20,6 +22,9 @@ namespace CatStealer.Infrastructure
             services.AddScoped<ITagRepository, TagRepository>();
 
             services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<CatStealDbContext>());
+
+            services.Configure<CatApiOptions>(configuration.GetSection(CatApiOptions.SectionName));
+            services.AddHttpClient<ICatApiClient, CatApiClient>();
 
             return services;
         }
