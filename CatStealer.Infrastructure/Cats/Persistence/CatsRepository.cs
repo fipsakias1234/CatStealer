@@ -42,13 +42,6 @@ namespace CatStealer.Infrastructure.Cats.Persistence
         }
 
         public async Task<PagedResult<CatEntity>> GetPagedCatsAsync(
-           PaginationParams paginationParams,
-           FilterParams filterParams)
-        {
-            return await GetPagedAsync(paginationParams, filterParams);
-        }
-
-        public override async Task<PagedResult<CatEntity>> GetPagedAsync(
           PaginationParams paginationParams,
           FilterParams filterParams)
         {

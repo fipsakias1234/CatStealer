@@ -1,5 +1,6 @@
 using CatStealer.Application;
 using CatStealer.Infrastructure;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,20 @@ builder.Services.AddSwaggerGen(
          Version = "v1",
          Description = "This is a simple api to steal cats",
      });
+     c.EnableAnnotations();
+     // Set the comments path for the Swagger JSON and UI
+     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+     // Enable XML comments - make sure to enable XML documentation file in project settings
+     if (File.Exists(xmlPath))
+     {
+         c.IncludeXmlComments(xmlPath);
+     }
+
  }
  );
+
 
 var app = builder.Build();
 
